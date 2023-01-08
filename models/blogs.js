@@ -9,7 +9,11 @@ const blogSchema=new Schema({
     author:{type:String,required:true,unique:true},
     likes:[{user:{type:String,unique:true}}],
     dislikes:[{user:{type:String,unique:true}}],
-    comments:[{user:{type:String,unique:true},value:{type:String}}]
+    comments:[{user:{type:String,unique:true},value:{type:String}}],
+    createdAt: {
+        type: Date,
+        default: new Date()
+    }
 })
 
 const Blog=mongoose.model('Blog',blogSchema)
