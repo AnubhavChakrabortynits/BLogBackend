@@ -1,9 +1,11 @@
-const express=require('express')
+const express=require('express');
+const app=express();
+const add=require('./controllers/blogsController');
 
-const app=express()
+app.use(express.json());
 
-app.get('/',(req,res)=>{
-    res.send('<h1>Hi</h1>')
-})
+app.get('/',add.getAllBlogs)
+
+app.post('/add',add.addBlog);
 
 app.listen(5000,()=>{console.log('up and running')})
