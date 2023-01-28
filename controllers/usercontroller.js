@@ -1,9 +1,10 @@
 const User=require('../models/user');
 var CryptoJS = require("crypto-js");
 const mongoose=require('mongoose');
+var jwt=require('jsonwebtoken')
 
 
-const signUp = async(req,res) =>{
+const signUp = async(req,res) => {
     await mongoose.connect("mongodb://localhost:27017/Blog",{ useNewUrlParser: true,
     useUnifiedTopology: true})
 
@@ -26,53 +27,55 @@ const signUp = async(req,res) =>{
 
 
 
-const Login = async(req,res) =>{
+const Login = async(req,res) => {
     await mongoose.connect("mongodb://localhost:27017/Blog",{ useNewUrlParser: true,
     useUnifiedTopology: true})
 
     try{
-       const username=req.body.username
-       const email=req.body.email
-       const password=req.body.password
+       const username=req.body.username;
+       const email=req.body.email;
+       const password=req.body.passwordl
 
        if(!username && !email){
-        res.status(200).json({error:"Please Provide Either Username Or Password!!!"})
+        res.status(200).json({error:"Please Provide Either Username Or Password!!!"});
        }
 
        if(username){
         if(!password){
-            res.status(200).error({error:"Password is Required!!!"})
+            res.status(200).error({error:"Password is Required!!!"});
         }
         else{
-          const user=await User.findOne({name:username})
+          const user=await User.findOne({name:username});
           if(!user){
-            res.status(200).json({error:"No Such User!!!"})
+            res.status(200).json({error:"No Such User!!!"});
           }
           else{
             if(CryptoJS.AES.decrypt(user?.password,'secret key 123').toString(CryptoJS.enc.Utf8)==password){
-                res.status(200).json({success:"true",user:user})
+                var token = jwt.sign({ user: {username:username} }, 'secret-1234567');
+                res.status(200).json({success:"true",user:token});
              }
              else{
-                res.status(200).json({error:"Invalid Password!!!"})
+                res.status(200).json({error:"Invalid Password!!!"});
              }
           }
         }
        }
        else if(email){
         if(!password){
-            res.status(200).error({error:"Password is Required!!!"})
+            res.status(200).error({error:"Password is Required!!!"});
         }
         else{
-          const user=await User.findOne({email:email})
+          const user=await User.findOne({email:email});
           if(!user){
-            res.status(200).json({error:"No Such User!!!"})
+            res.status(200).json({error:"No Such User!!!"});
           }
           else{
             if(CryptoJS.AES.decrypt(user?.password,'secret key 123').toString(CryptoJS.enc.Utf8)==password){
-                res.status(200).json({success:"true",user:user})
+                 var token = jwt.sign({ user: {email: email } }, 'secret-1234567');
+                res.status(200).json({success:"true",user:token});
              }
              else{
-                res.status(200).json({error:"Invalid Password!!!"})
+                res.status(200).json({error:"Invalid Password!!!"});
              }
           }
         }
@@ -84,5 +87,15 @@ const Login = async(req,res) =>{
     }
 }
 
+const authenticate = async(req,res) => {
+  try{
+    var user=await jwt.verify(req.body.user,'secret-1234567');
+    next();
+   }
+   catch(err){
+    res.status(200).json({error: "Please Login..."})
+   }
+}
 
-module.exports={signUp,Login}
+
+module.exports={signUp,Login,authenticate};
