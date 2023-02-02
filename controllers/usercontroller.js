@@ -5,8 +5,6 @@ var jwt=require('jsonwebtoken')
 
 
 const signUp = async(req,res) => {
-    await mongoose.connect("mongodb://localhost:27017/Blog",{ useNewUrlParser: true,
-    useUnifiedTopology: true})
 
     try{
         const name=req.body.name
@@ -28,8 +26,6 @@ const signUp = async(req,res) => {
 
 
 const Login = async(req,res) => {
-    await mongoose.connect("mongodb://localhost:27017/Blog",{ useNewUrlParser: true,
-    useUnifiedTopology: true})
 
     try{
        const username=req.body.username;
@@ -89,11 +85,16 @@ const Login = async(req,res) => {
 
 const authenticate = async(req,res) => {
   try{
+
     var user=await jwt.verify(req.body.user,'secret-1234567');
+    req.user=user;
     next();
+
    }
    catch(err){
+
     res.status(200).json({error: "Please Login..."})
+
    }
 }
 
