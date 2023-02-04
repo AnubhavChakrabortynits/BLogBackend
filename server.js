@@ -17,4 +17,8 @@ app.post('/like',add.likeBlog);
 
 app.post('/dislike',add.disLikeBlog);
 
+app.post('/comment',add.commentOnBLog);
+
+app.post('/deletecomment',add.deleteComment);
+
 app.listen(5000,()=>{console.log('up and running')}) 
