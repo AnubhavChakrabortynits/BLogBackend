@@ -55,11 +55,10 @@ const likeBlog= async(req,res) => {
     
     try{
 
-        let author=req.body.author;
-        let title=req.body.title;
         let user=req.user.name;
+        let blogID=req.body.blogID;
 
-        let blog=await Blogs.findOne({title:title,author:author});
+        let blog=await Blogs.findById(blogID);
         let newDislikes;
 
         if(!blog){
@@ -80,12 +79,14 @@ const likeBlog= async(req,res) => {
         }
 
         blog.likes.push({user: user});
+
         if(newDislikes!=undefined){
             blog.dislikes=newDislikes;
         }
         else{
             blog.dislikes=[];
         }
+
         blog.likes.push({user: user});
         blog=await blog.save();
 
@@ -103,11 +104,10 @@ const disLikeBlog = async(req,res) => {
 
     try{
 
-        let author=req.body.author;
-        let title=req.body.title;
         let user=req.user.name;
+        let blogID=req.body.blogID;
 
-        let blog=await Blogs.findOne({title:title,author:author});
+        let blog=await Blogs.findById(blogID);
         let newLikes;
 
         if(!blog){
@@ -151,12 +151,11 @@ const commentOnBLog =async(req,res) => {
 
     try{
 
-        let author=req.body.author;
-        let title=req.body.title;
+        let blogID=req.body.blogID;
         let comment=req.body.comment;
         let user="Lizzie";
 
-        let blog=await Blogs.findOne({title:title,author:author});
+        let blog=await Blogs.findById(blogID);
 
         if(!blog){
             res.status(400).json({error: "No Such Blog"});
@@ -268,4 +267,32 @@ const updateBlog =async(req,res) => {
     }
 }
 
-module.exports={addBlog,getAllBlogs,likeBlog,disLikeBlog,commentOnBLog,deleteComment,updateBlog};
+const deleteBlog =async(req,res) => {
+
+    try{
+        
+        const blogID=req.body.blogID;
+
+        const blog=await Blogs.findById(blogID);
+
+        if(!blog){
+            res.status(400).json({error:"No Such Blog..."});
+            return;
+        }
+
+        await blog.delete();
+
+        const blogs=await Blogs.find();
+
+        res.status(200).json({success:"true",blogs: blogs});
+
+
+    }
+    catch(e){
+        
+        res.status(400).json({error: "Something Went Wrong..."});
+
+    }
+}
+
+module.exports={addBlog,getAllBlogs,likeBlog,disLikeBlog,commentOnBLog,deleteComment,updateBlog,editComment,deleteBlog};
