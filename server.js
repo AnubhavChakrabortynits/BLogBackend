@@ -13,7 +13,7 @@ app.get('/',add.getAllBlogs)
 
 app.post('/add',add.addBlog);
 
-app.post('/like',add.likeBlog);
+app.post('/like',add.likeBlog); 
 
 app.post('/dislike',add.disLikeBlog);
 
@@ -22,5 +22,9 @@ app.post('/comment',add.commentOnBLog);
 app.post('/deletecomment',add.deleteComment);
 
 app.post('/deleteblog',add.deleteBlog);
+
+app.post('/search',add.searchBlog);
+
+app.post('/searchbytag',add.searchByTag);
 
 app.listen(5000,()=>{console.log('up and running')}) 

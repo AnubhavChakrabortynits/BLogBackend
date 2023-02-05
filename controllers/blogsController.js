@@ -295,4 +295,63 @@ const deleteBlog =async(req,res) => {
     }
 }
 
-module.exports={addBlog,getAllBlogs,likeBlog,disLikeBlog,commentOnBLog,deleteComment,updateBlog,editComment,deleteBlog};
+const searchBlog =async(req,res) => {
+
+    try{
+
+        const blogName=req.body.title;
+
+        const blogs=await Blogs.find({title: {$regex:`${blogName}`}});
+
+        res.status(200).json({blogs:blogs,succes:"true"});
+
+    }
+    catch(e){
+
+        res.status(400).json({error:"Something Went Wrong..."});
+
+    }
+}
+
+const searchByTag =async(req,res) => {
+
+    try{
+        
+        const tagsList=req.body.tags;
+        let blogs=[];
+
+        for(let i=0;i<tagsList.length;i++){
+            let blog=await Blogs.find({tags: {$regex: `^${tagsList[i]}$`}});
+            blogs=[...blog];
+        }
+
+        res.status(200).json({success:"true", blogs: blogs});
+
+    }
+    catch(e){ 
+    
+        res.status(400).json({error: "Something Went Wrong..."});
+
+    }
+}
+
+const searchByAuthor =async(req,res) => {
+
+    try{
+
+        const author=req.body.author;
+
+        const blogs=await Blogs.find({author: author});
+
+        res.status(200).json({success:"true",blogs: blogs});
+
+    }
+    catch(e){
+
+        res.status(400).json({error: "Something Went Wrong..."});
+
+    }
+}
+
+
+module.exports={addBlog,getAllBlogs,likeBlog,disLikeBlog,commentOnBLog,deleteComment,updateBlog,editComment,deleteBlog,searchBlog,searchByTag,searchByAuthor};
